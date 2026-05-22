@@ -38,6 +38,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root Route — confirms backend is live
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Gita Pooja Essentials — Backend API',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      rituals: '/api/rituals',
+      products: '/api/products',
+      auth: '/api/auth',
+      orders: '/api/orders'
+    },
+    time: new Date()
+  });
+});
+
 // Health Check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date() });
@@ -45,6 +62,11 @@ app.get('/health', (req, res) => {
 
 // Mount Routes
 app.use('/api', apiRouter);
+
+// 404 handler for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found', path: req.originalUrl });
+});
 
 // Database Connection & Pre-seeding
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/pooja-platform';
