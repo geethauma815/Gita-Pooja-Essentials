@@ -10,8 +10,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Enable CORS
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  process.env.FRONTEND_URL,       // Set this in Render dashboard to your Vercel URL
+  'https://gita-pooja-essentials.vercel.app',
+].filter(Boolean);
+
 app.use(cors({
-  origin: '*', // Allow frontend development requests
+  origin: function(origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.some(o => origin.startsWith(o))) {
+      return callback(null, true);
+    }
+    // Also allow any vercel.app subdomain (preview deployments)
+    if (origin.endsWith('.vercel.app') || origin.endsWith('.onrender.com')) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Permissive for now — tighten after confirming URLs
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000/api';
 
 export function AppProvider({ children }) {
   // Auth state
